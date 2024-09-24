@@ -1,7 +1,3 @@
 *.so
 
-pkg
-*.zst
-bindp
-src
-
+aur
