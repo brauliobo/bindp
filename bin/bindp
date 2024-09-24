@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Check if at least two arguments are provided
+if [ "$#" -lt 2 ]; then
+  echo "Usage: $0 IP[:PORT] command [args...]"
+  exit 1
+fi
+
+# Extract IP and optional Port from the first argument
+IP_PORT="$1"
+
+# Check if the first argument contains a colon (i.e., has a port)
+if [[ "$IP_PORT" == *:* ]]; then
+  IP="${IP_PORT%%:*}"
+  PORT="${IP_PORT##*:}"
+  export REUSE_PORT=1
+  export BIND_PORT="$PORT"
+else
+  IP="$IP_PORT"
+  # Unset REUSE_PORT and BIND_PORT if they were previously set
+  unset REUSE_PORT
+  unset BIND_PORT
+fi
+
+# Shift arguments so that the remaining ones represent the command
+shift
+
+# Set common environment variables
+export REUSE_ADDR=1
+export BIND_ADDR="$IP"
+
+# Set the path to libindp.so
+LIBINDP_PATH="/usr/lib/libindp.so"  # Adjust the path if necessary
+
+# Run the provided command with LD_PRELOAD
+LD_PRELOAD="$LIBINDP_PATH" "$@"
+
