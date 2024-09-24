@@ -1,1 +1,7 @@
 *.so
+
+pkg
+*.zst
+bindp
+src
+
